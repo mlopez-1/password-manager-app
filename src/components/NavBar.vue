@@ -10,7 +10,7 @@ const authStore = useAuthStore()
       <div class="flex justify-between h-16">
         <div class="flex">
           <div class="flex-shrink-0 flex items-center">
-            <span class="text-xl font-bold text-indigo-600">Password Manager</span>
+            <h1 class="text-xl font-bold text-indigo-600">Password Manager</h1>
           </div>
         </div>
         <div class="flex items-center">
