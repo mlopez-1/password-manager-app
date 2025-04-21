@@ -1,65 +1,63 @@
 import { ref } from 'vue'
 
-// export const usePasswordManager = () => {
-//     const passwords = ref([])
-//     const error = ref(null)
-  
-//     const getPasswords = async () => {
-//       try {
-//         const response = await axios.get('/api/passwords')
-//         passwords.value = response.data
-//       } catch (err) {
-//         error.value = err.response?.data?.message || 'Failed to fetch passwords'
-//         throw err
-//       }
-//     }
-  
-//     const addPassword = async (username, password) => {
-//       try {
-//         await axios.post('/api/passwords', { username, password })
-//         await getPasswords() // Refresh the list
-//       } catch (err) {
-//         error.value = err.response?.data?.message || 'Failed to add password'
-//         throw err
-//       }
-//     }
-  
-//     const decryptPassword = async (username) => {
-//       try {
-//         const response = await axios.get(`/api/passwords/${username}/decrypt`)
-//         return response.data.password
-//       } catch (err) {
-//         error.value = err.response?.data?.message || 'Failed to decrypt password'
-//         throw err
-//       }
-//     }
-  
-//     return {
-//       passwords,
-//       error,
-//       getPasswords,
-//       addPassword,
-//       decryptPassword
-//     }
-//   }
-
 export const usePasswordManager = () => {
   const passwords = ref([
-    { username: 'example@gmail.com', password: '••••••••' },
-    { username: 'bank-account', password: '••••••••' }
+    { 
+      username: 'Personal Email', 
+      userEmail: 'example@gmail.com', 
+      password: '••••••••',
+      notes: 'Main personal email account',
+      updatedAt: new Date().toISOString()
+    },
+    { 
+      username: 'Bank Account', 
+      userEmail: 'john.doe@bank.com', 
+      password: '••••••••',
+      notes: 'Primary checking account',
+      updatedAt: new Date().toISOString()
+    },
+    { 
+      username: 'Netflix', 
+      userEmail: 'john@streaming.com', 
+      password: '••••••••',
+      notes: 'Family plan',
+      updatedAt: new Date().toISOString()
+    }
   ])
   
   const addPassword = (username, password) => {
-    passwords.value.push({ username, password: '••••••••' })
+    passwords.value.push({ 
+      username,
+      userEmail: '',
+      password: '••••••••',
+      decryptedPassword: password,
+      notes: '',
+      updatedAt: new Date().toISOString()
+    })
   }
   
   const decryptPassword = async (username) => {
-    return 'test123' // Mock decrypted password
+    // Simulate decryption delay
+    await new Promise(resolve => setTimeout(resolve, 300))
+    // Mock decrypted passwords based on username
+    const mockPasswords = {
+      'Personal Email': 'MySecurePassword123!',
+      'Bank Account': 'BankPass789$',
+      'Netflix': 'Streaming2023'
+    }
+    return mockPasswords[username] || 'decrypted-password'
+  }
+
+  const encryptPassword = async (password) => {
+    // Simulate encryption
+    await new Promise(resolve => setTimeout(resolve, 300))
+    return '••••••••'
   }
 
   return {
     passwords,
     addPassword,
-    decryptPassword
+    decryptPassword,
+    encryptPassword
   }
 }

@@ -1,0 +1,25 @@
+/* Button styles */
+.v-btn--elevated {
+    box-shadow: 0 2px 4px rgba(34, 139, 34, 0.3) !important;
+  }
+  
+  .v-btn--elevated:hover {
+    box-shadow: 0 4px 8px rgba(34, 139, 34, 0.4) !important;
+    transform: translateY(-1px);
+  }
+  
+  /* Card styles */
+  .v-card {
+    border-radius: 8px !important;
+    border-left: 4px solid var(--v-primary-base) !important;
+  }
+  
+  /* Table styles */
+  .v-table {
+    --v-table-header-color: var(--v-primary-base) !important;
+  }
+  
+  .v-table thead tr th {
+    font-weight: 600 !important;
+    letter-spacing: 0.5px;
+  }
