@@ -1,5 +1,4 @@
 import { ref } from 'vue'
-import axios from 'axios'
 
 // export const usePasswordManager = () => {
 //     const passwords = ref([])
@@ -49,34 +48,17 @@ export const usePasswordManager = () => {
     { username: 'example@gmail.com', password: '••••••••' },
     { username: 'bank-account', password: '••••••••' }
   ])
-  const error = ref(null)
-
-  const getPasswords = async () => {
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 500))
+  
+  const addPassword = (username, password) => {
+    passwords.value.push({ username, password: '••••••••' })
   }
-
-  const addPassword = async (username, password) => {
-    try {
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 500))
-      passwords.value.push({ username, password: '••••••••' })
-    } catch (err) {
-      error.value = 'Failed to add password'
-      throw err
-    }
-  }
-
+  
   const decryptPassword = async (username) => {
-    // Simulate decryption
-    await new Promise(resolve => setTimeout(resolve, 500))
-    return 'decrypted-password-123'
+    return 'test123' // Mock decrypted password
   }
 
   return {
     passwords,
-    error,
-    getPasswords,
     addPassword,
     decryptPassword
   }
