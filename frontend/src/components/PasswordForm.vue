@@ -1,58 +1,126 @@
+<template>
+  <v-form @submit.prevent="handleSubmit">
+    <v-card>
+      <v-toolbar :color="isEditMode ? 'primary' : 'secondary'" dark>
+        <v-toolbar-title>
+          {{ isEditMode ? 'Edit Password' : 'Add New Password' }}
+        </v-toolbar-title>
+      </v-toolbar>
+
+      <v-card-text class="mt-4">
+        <v-text-field
+          v-model="form.accountName"
+          label="Account Name"
+          :rules="[v => !!v || 'Account name is required']"
+          required
+          variant="outlined"
+        ></v-text-field>
+
+        <v-text-field
+          v-model="form.username"
+          label="Username/Email"
+          variant="outlined"
+        ></v-text-field>
+
+        <v-text-field
+          v-model="form.password"
+          :label="showPassword ? 'Password' : 'Password (hidden)'"
+          :type="showPassword ? 'text' : 'password'"
+          :rules="[v => !!v || 'Password is required']"
+          required
+          variant="outlined"
+          :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
+          @click:append-inner="showPassword = !showPassword"
+        ></v-text-field>
+
+        <v-textarea
+          v-model="form.notes"
+          label="Notes"
+          rows="2"
+          variant="outlined"
+        ></v-textarea>
+      </v-card-text>
+
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn
+          color="grey"
+          variant="text"
+          @click="$emit('cancel')"
+        >
+          Cancel
+        </v-btn>
+        <v-btn
+          color="primary"
+          type="submit"
+          :loading="passwordStore.loading"
+        >
+          {{ isEditMode ? 'Update' : 'Save' }}
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-form>
+</template>
+
 <script setup>
-import { ref } from 'vue'
-import { usePasswordManager } from '@/composables/usePasswordManager'
+import { ref, watch } from 'vue'
+import { usePasswordStore } from '@/stores/password'
 
-const { addPassword } = usePasswordManager()
+const props = defineProps({
+  initialData: {
+    type: Object,
+    default: null
+  }
+})
 
-const username = ref('')
-const password = ref('')
-const error = ref('')
-const success = ref('')
+const emit = defineEmits(['submit', 'cancel'])
+
+const passwordStore = usePasswordStore()
+const showPassword = ref(false)
+const isEditMode = ref(false)
+
+const form = ref({
+  accountName: '',
+  username: '',
+  password: '',
+  notes: ''
+})
+
+// Initialize form if editing
+watch(() => props.initialData, (data) => {
+  if (data) {
+    isEditMode.value = true
+    form.value = {
+      accountName: data.accountName,
+      username: data.username,
+      password: '', // Password is empty for security
+      notes: data.notes || ''
+    }
+  }
+}, { immediate: true })
 
 const handleSubmit = async () => {
-  try {
-    await addPassword(username.value, password.value)
-    success.value = 'Password added successfully!'
-    username.value = ''
-    password.value = ''
-  } catch (err) {
-    error.value = err.message
+  const success = await passwordStore.addPassword({
+    accountName: form.value.accountName,
+    username: form.value.username,
+    password: form.value.password,
+    notes: form.value.notes
+  })
+
+  if (success) {
+    emit('submit')
+    resetForm()
   }
 }
+
+const resetForm = () => {
+  form.value = {
+    accountName: '',
+    username: '',
+    password: '',
+    notes: ''
+  }
+  showPassword.value = false
+  isEditMode.value = false
+}
 </script>
-
-<template>
-    <form @submit.prevent="handleSubmit" class="space-y-4">
-        <div>
-            <label for="username" class="block text-sm font-medium text-gray-700">Username/Service</label>
-                <input
-                    id="username"
-                    v-model="username"
-                    type="text"
-                    required
-                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                />
-        </div>
-
-        <div>
-        <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
-            <input
-                id="password"
-                v-model="password"
-                type="password"
-                required
-                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            />
-        </div>
-
-        <div v-if="error" class="text-red-500 text-sm">{{ error }}</div>
-        <div v-if="success" class="text-green-500 text-sm">{{ success }}</div>
-
-        <button
-        type="submit"
-        class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-        >
-        Save Password
-        </button>
-    </form>
-</template>

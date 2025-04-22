@@ -1,12 +1,18 @@
-<script setup>
-import { RouterView } from 'vue-router';
-</script>
-
 <template>
   <v-app>
-    <RouterView />
+    <NavBar v-if="authStore.user" />
+    <v-main>
+      <router-view />
+    </v-main>
   </v-app>
 </template>
+
+<script setup>
+import { useAuthStore } from '@/stores/auth'
+import NavBar from '@/components/NavBar.vue'
+
+const authStore = useAuthStore()
+</script>
 
 <style>
 .v-application {
